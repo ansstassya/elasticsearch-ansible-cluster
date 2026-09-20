@@ -1,0 +1,16 @@
+cluster.name: es-cluster
+node.name: {{ inventory_hostname }}
+network.host: {{ private_ip }}
+discovery.seed_hosts:
+  - {{ hostvars['es-node-1']['private_ip'] }}
+  - {{ hostvars['es-node-2']['private_ip'] }}
+  - {{ hostvars['es-node-3']['private_ip'] }}
+cluster.initial_master_nodes:
+  - es-node-1
+  - es-node-2
+  - es-node-3
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
