@@ -33,6 +33,15 @@
     state: present
     update_cache: true
 
+- name: Copy TLS certificate bundle
+  copy:
+    src: elastic-certs.p12
+    dest: /etc/elasticsearch/elastic-certs.p12
+    owner: root
+    group: elasticsearch
+    mode: "0660"
+  notify: restart elasticsearch
+
 - name: Configure elasticsearch.yml
   template:
     src: elasticsearch.yml.j2

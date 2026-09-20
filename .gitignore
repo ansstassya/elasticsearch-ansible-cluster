@@ -1,3 +1,4 @@
 *.pem
 *.retry
 .vault_pass
+roles/elasticsearch/files/*.p12
