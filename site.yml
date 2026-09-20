@@ -3,55 +3,5 @@
   hosts: elasticsearch
   become: true
 
-  tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: true
-
-    - name: Install prerequisites
-      apt:
-        name:
-          - apt-transport-https
-          - gnupg
-        state: present
-    - name: Ensure keyrings directory exists
-      file:
-        path: /usr/share/keyrings
-        state: directory
-        mode: "0755"
-
-    - name: Download and dearmor Elasticsearch GPG key
-      shell: curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | gpg --dearmor -o /usr/share/keyrings/elastic.gpg
-      args:
-        creates: /usr/share/keyrings/elastic.gpg
-
-    - name: Add Elasticsearch APT repository
-      apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/elastic.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main"
-        state: present
-        filename: elastic-8.x
-
-
-    - name: Install Elasticsearch
-      apt:
-        name: elasticsearch
-        state: present
-        update_cache: true
-
-    - name: Configure elasticsearch.yml
-      template:
-        src: templates/elasticsearch.yml.j2
-        dest: /etc/elasticsearch/elasticsearch.yml
-      notify: restart elasticsearch
-
-    - name: Start and enable Elasticsearch
-      systemd:
-        name: elasticsearch
-        state: started
-        enabled: true
-
-  handlers:
-    - name: restart elasticsearch
-      systemd:
-        name: elasticsearch
-        state: restarted
+  roles:
+    - elasticsearch
