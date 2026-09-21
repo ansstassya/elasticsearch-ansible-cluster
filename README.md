@@ -16,7 +16,8 @@
 ```
 .
 ├── ansible.cfg
-├── inventory.ini
+├── inventory.ini.example                # шаблон, реальний inventory.ini — в .gitignore
+├── .gitignore
 ├── site.yml
 ├── group_vars/elasticsearch/vault.yml     # пароль elastic-юзера, зашифрований
 └── roles/elasticsearch/
@@ -30,7 +31,11 @@
 
 ## Як розгорнути
 
-1. Клонувати репо, заповнити `inventory.ini` своїми IP і шляхом до SSH-ключа.
+1. Клонувати репо, скопіювати шаблон і заповнити своїми IP і шляхом до SSH-ключа:
+```bash
+   cp inventory.ini.example inventory.ini
+   nano inventory.ini
+```
 2. Згенерувати транспортний TLS-сертифікат на одній з нод (`elasticsearch-certutil cert --out elastic-certs.p12`), скопіювати в `roles/elasticsearch/files/`.
 3. `ansible-playbook site.yml --ask-vault-pass`
 4. На одній із нод (по SSH) виконати `sudo /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -a -b`, скопіювати пароль і зберегти в `group_vars/elasticsearch/vault.yml` через ansible-vault.
