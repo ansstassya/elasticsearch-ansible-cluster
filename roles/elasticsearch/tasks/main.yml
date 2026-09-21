@@ -53,3 +53,30 @@
     name: elasticsearch
     state: started
     enabled: true
+
+- name: Wait for cluster to be ready
+  uri:
+    url: "http://{{ hostvars['es-node-1']['ansible_host'] }}:9200/_cluster/health"
+    url_username: elastic
+    url_password: "{{ vault_elastic_password }}"
+    status_code: 200
+  register: health_check
+  until: health_check.status == 200
+  retries: 10
+  delay: 5
+  run_once: true
+  delegate_to: localhost
+  become: false
+
+- name: Create logs-index with explicit settings and mapping
+  uri:
+    url: "http://{{ hostvars['es-node-1']['ansible_host'] }}:9200/logs-index"
+    method: PUT
+    url_username: elastic
+    url_password: "{{ vault_elastic_password }}"
+    body: "{{ lookup('template', 'index-settings.json.j2') }}"
+    body_format: json
+    status_code: [200, 201, 400]
+  run_once: true
+  delegate_to: localhost
+  become: false
